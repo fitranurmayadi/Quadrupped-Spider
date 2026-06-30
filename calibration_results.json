@@ -1,0 +1,102 @@
+[
+  {
+    "timestamp": "2026-06-29 17:46:04",
+    "physics_mode": "OFF",
+    "base_position": {
+      "x": -0.00013143370262034952,
+      "y": 0.0006830976439071971,
+      "z": 0.21067352125113145
+    },
+    "physical_attitude": {
+      "roll": -0.03851566242879994,
+      "pitch": -0.25448588215709117,
+      "yaw": -0.0026734481749386787
+    },
+    "world_euler": {
+      "roll": 0.25448588215709117,
+      "pitch": 0.03851566242879994,
+      "yaw": -0.0026734481749386787
+    },
+    "joint_angles": {
+      "fr_coxa_joint": 0.5,
+      "fr_femur_joint": 1.0,
+      "fr_tibia_joint": 0.5000002384185791,
+      "fl_coxa_joint": -0.5,
+      "fl_femur_joint": 1.0,
+      "fl_tibia_joint": 0.5,
+      "rr_coxa_joint": -0.5,
+      "rr_femur_joint": 1.0,
+      "rr_tibia_joint": 0.5,
+      "rl_coxa_joint": 0.5,
+      "rl_femur_joint": 1.0,
+      "rl_tibia_joint": 0.5
+    }
+  },
+  {
+    "timestamp": "2026-06-29 17:46:07",
+    "physics_mode": "OFF",
+    "base_position": {
+      "x": 4.1708559607849874e-05,
+      "y": 0.0019123735341829893,
+      "z": 0.11166355263469116
+    },
+    "physical_attitude": {
+      "roll": -0.03803400442050369,
+      "pitch": -0.24808271716181163,
+      "yaw": -0.006222856198613145
+    },
+    "world_euler": {
+      "roll": 0.24808271716181163,
+      "pitch": 0.03803400442050369,
+      "yaw": -0.006222856198613145
+    },
+    "joint_angles": {
+      "fr_coxa_joint": 0.5,
+      "fr_femur_joint": 1.0,
+      "fr_tibia_joint": 0.5000002384185791,
+      "fl_coxa_joint": -0.5,
+      "fl_femur_joint": 1.0,
+      "fl_tibia_joint": 0.5,
+      "rr_coxa_joint": -0.5,
+      "rr_femur_joint": 1.0,
+      "rr_tibia_joint": 0.5,
+      "rl_coxa_joint": 0.5,
+      "rl_femur_joint": 1.0,
+      "rl_tibia_joint": 0.5
+    }
+  },
+  {
+    "pose_name": "summon",
+    "timestamp": "2026-06-29 17:55:34",
+    "physics_mode": "ON",
+    "base_position": {
+      "x": 2.2689561498578706e-06,
+      "y": -9.586040684281007e-06,
+      "z": 0.00848998824786055
+    },
+    "physical_attitude": {
+      "roll": 6.209441308428655e-07,
+      "pitch": 2.4688869554239134e-07,
+      "yaw": -3.3703997539772996e-06
+    },
+    "world_euler": {
+      "roll": -2.4688869554239134e-07,
+      "pitch": -6.209441308428655e-07,
+      "yaw": -3.3703997539772996e-06
+    },
+    "joint_angles": {
+      "fr_coxa_joint": 0.0,
+      "fr_femur_joint": 0.0,
+      "fr_tibia_joint": 0.0,
+      "fl_coxa_joint": 0.0,
+      "fl_femur_joint": 0.0,
+      "fl_tibia_joint": 0.0,
+      "rr_coxa_joint": 0.0,
+      "rr_femur_joint": 0.0,
+      "rr_tibia_joint": 0.0,
+      "rl_coxa_joint": 0.0,
+      "rl_femur_joint": 0.0,
+      "rl_tibia_joint": 0.0
+    }
+  }
+]

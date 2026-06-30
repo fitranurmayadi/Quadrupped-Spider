@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+.mypy_cache/
+.pytest_cache/
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# PyBullet / Simulation
+*.bullet
+*.bin
+
+# Saved RL models (large files - use Git LFS or exclude)
+models/*.zip
+
+# Tensorboard logs
+tensorboard_logs/
+
+# Calibration output (optional: keep or ignore)
+# calibration_results.json
+
+# Scratch / temp
+scratch/
+*.tmp
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# FreeCAD backup
+freecad/*.FCBak
+
+# Docs generated
+docs/

@@ -1,0 +1,266 @@
+<?xml version="1.0"?>
+<robot name="quadruped_spider">
+
+  <!-- Material Definitions -->
+  <material name="white">
+    <color rgba="1.0 1.0 1.0 1.0"/>
+  </material>
+  <material name="black">
+    <color rgba="0.1 0.1 0.1 1.0"/>
+  </material>
+  <material name="dark_gray">
+    <color rgba="0.2 0.2 0.2 1.0"/>
+  </material>
+  <material name="blue">
+    <color rgba="0.1 0.4 0.8 1.0"/>
+  </material>
+  <material name="orange">
+    <color rgba="0.9 0.4 0.1 1.0"/>
+  </material>
+  <material name="red">
+    <color rgba="0.8 0.1 0.1 1.0"/>
+  </material>
+
+  <!-- Main Body (Trunk) - Mesh dari FreeCAD (main_body.stl) -->
+  <link name="main_body">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="1.4"/>
+      <inertia ixx="0.003" ixy="0" ixz="0" iyy="0.003" iyz="0" izz="0.005"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/main_body.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="meshes/main_body.stl" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Leg 1: Front-Left (fl) -->
+  <link name="fl_coxa">
+    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/></inertial>
+    <visual><origin xyz="0.0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/coxa.stl" scale="0.001 0.001 0.001"/></geometry><material name="black"/></visual>
+    <collision><origin xyz="0.0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/coxa.stl" scale="0.001 0.001 0.001"/></geometry></collision>
+  </link>
+  <joint name="fl_coxa_joint" type="revolute">
+    <parent link="main_body"/>
+    <child link="fl_coxa"/>
+    <!-- Titik Coxa Leg 1: Depan Kiri (+X, -Y) -->
+    <origin xyz="0.0525 -0.047 0.020" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.0" upper="1.0" effort="5.0" velocity="5.0"/>
+    <dynamics damping="0.05" friction="0.01"/>
+  </joint>
+
+  <link name="fl_femur">
+    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.15"/><inertia ixx="0.0002" ixy="0" ixz="0" iyy="0.0002" iyz="0" izz="0.0002"/></inertial>
+    <visual><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/femur.stl" scale="0.001 0.001 0.001"/></geometry><material name="white"/></visual>
+    <collision><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/femur.stl" scale="0.001 0.001 0.001"/></geometry></collision>
+  </link>
+  <joint name="fl_femur_joint" type="revolute">
+    <parent link="fl_coxa"/>
+    <child link="fl_femur"/>
+    <origin xyz="0.0275 0 -0.01" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.2" upper="1.2" effort="6.0" velocity="5.0"/>
+    <dynamics damping="0.05" friction="0.01"/>
+  </joint>
+
+  <link name="fl_tibia">
+    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/></inertial>
+    <visual><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/tibia.stl" scale="0.001 0.001 0.001"/></geometry><material name="black"/></visual>
+    <collision><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/tibia.stl" scale="0.001 0.001 0.001"/></geometry></collision>
+  </link>
+  <joint name="fl_tibia_joint" type="revolute">
+    <parent link="fl_femur"/>
+    <child link="fl_tibia"/>
+    <origin xyz="0.10 0 0.0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-3.0" upper="3.0" effort="6.0" velocity="5.0"/>
+    <dynamics damping="0.05" friction="0.01"/>
+  </joint>
+
+  <link name="fl_foot">
+    <inertial><mass value="0.02"/><inertia ixx="0.00001" ixy="0" ixz="0" iyy="0.00001" iyz="0" izz="0.00001"/></inertial>
+    <visual><geometry><sphere radius="0.01"/></geometry><material name="red"/></visual>
+    <collision><geometry><sphere radius="0.01"/></geometry></collision>
+  </link>
+  <joint name="fl_foot_joint" type="fixed">
+    <parent link="fl_tibia"/>
+    <child link="fl_foot"/>
+    <origin xyz="0.121 0 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Leg 2: Rear-Left (rl) -->
+  <link name="rl_coxa">
+    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/></inertial>
+    <visual><origin xyz="0.0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/coxa.stl" scale="0.001 0.001 0.001"/></geometry><material name="black"/></visual>
+    <collision><origin xyz="0.0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/coxa.stl" scale="0.001 0.001 0.001"/></geometry></collision>
+  </link>
+  <joint name="rl_coxa_joint" type="revolute">
+    <parent link="main_body"/>
+    <child link="rl_coxa"/>
+    <!-- Titik Coxa Leg 2: Belakang Kiri (+X, +Y) -->
+    <origin xyz="0.0525 0.047 0.020" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.0" upper="1.0" effort="5.0" velocity="5.0"/>
+    <dynamics damping="0.05" friction="0.01"/>
+  </joint>
+
+  <link name="rl_femur">
+    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.15"/><inertia ixx="0.0002" ixy="0" ixz="0" iyy="0.0002" iyz="0" izz="0.0002"/></inertial>
+    <visual><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/femur.stl" scale="0.001 0.001 0.001"/></geometry><material name="white"/></visual>
+    <collision><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/femur.stl" scale="0.001 0.001 0.001"/></geometry></collision>
+  </link>
+  <joint name="rl_femur_joint" type="revolute">
+    <parent link="rl_coxa"/>
+    <child link="rl_femur"/>
+    <origin xyz="0.0275 0 -0.01" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.2" upper="1.2" effort="6.0" velocity="5.0"/>
+    <dynamics damping="0.05" friction="0.01"/>
+  </joint>
+
+  <link name="rl_tibia">
+    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/></inertial>
+    <visual><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/tibia.stl" scale="0.001 0.001 0.001"/></geometry><material name="black"/></visual>
+    <collision><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/tibia.stl" scale="0.001 0.001 0.001"/></geometry></collision>
+  </link>
+  <joint name="rl_tibia_joint" type="revolute">
+    <parent link="rl_femur"/>
+    <child link="rl_tibia"/>
+    <origin xyz="0.10 0 0.0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-3.0" upper="3.0" effort="6.0" velocity="5.0"/>
+    <dynamics damping="0.05" friction="0.01"/>
+  </joint>
+
+  <link name="rl_foot">
+    <inertial><mass value="0.02"/><inertia ixx="0.00001" ixy="0" ixz="0" iyy="0.00001" iyz="0" izz="0.00001"/></inertial>
+    <visual><geometry><sphere radius="0.01"/></geometry><material name="red"/></visual>
+    <collision><geometry><sphere radius="0.01"/></geometry></collision>
+  </link>
+  <joint name="rl_foot_joint" type="fixed">
+    <parent link="rl_tibia"/>
+    <child link="rl_foot"/>
+    <origin xyz="0.121 0 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Leg 3: Front-Right (fr) -->
+  <link name="fr_coxa">
+    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/></inertial>
+    <visual><origin xyz="0.0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/coxa.stl" scale="0.001 0.001 0.001"/></geometry><material name="black"/></visual>
+    <collision><origin xyz="0.0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/coxa.stl" scale="0.001 0.001 0.001"/></geometry></collision>
+  </link>
+  <joint name="fr_coxa_joint" type="revolute">
+    <parent link="main_body"/>
+    <child link="fr_coxa"/>
+    <!-- Titik Coxa Leg 3: Depan Kanan (-X, -Y) -->
+    <origin xyz="-0.0525 -0.047 0.020" rpy="0 0 3.14159"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.0" upper="1.0" effort="5.0" velocity="5.0"/>
+    <dynamics damping="0.05" friction="0.01"/>
+  </joint>
+
+  <link name="fr_femur">
+    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.15"/><inertia ixx="0.0002" ixy="0" ixz="0" iyy="0.0002" iyz="0" izz="0.0002"/></inertial>
+    <visual><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/femur.stl" scale="0.001 0.001 0.001"/></geometry><material name="white"/></visual>
+    <collision><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/femur.stl" scale="0.001 0.001 0.001"/></geometry></collision>
+  </link>
+  <joint name="fr_femur_joint" type="revolute">
+    <parent link="fr_coxa"/>
+    <child link="fr_femur"/>
+    <origin xyz="0.0275 0 -0.01" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.2" upper="1.2" effort="6.0" velocity="5.0"/>
+    <dynamics damping="0.05" friction="0.01"/>
+  </joint>
+
+  <link name="fr_tibia">
+    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/></inertial>
+    <visual><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/tibia.stl" scale="0.001 0.001 0.001"/></geometry><material name="black"/></visual>
+    <collision><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/tibia.stl" scale="0.001 0.001 0.001"/></geometry></collision>
+  </link>
+  <joint name="fr_tibia_joint" type="revolute">
+    <parent link="fr_femur"/>
+    <child link="fr_tibia"/>
+    <origin xyz="0.10 0 0.0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-3.14159" upper="3.14159" effort="6.0" velocity="5.0"/>
+    <dynamics damping="0.05" friction="0.01"/>
+  </joint>
+
+  <link name="fr_foot">
+    <inertial><mass value="0.02"/><inertia ixx="0.00001" ixy="0" ixz="0" iyy="0.00001" iyz="0" izz="0.00001"/></inertial>
+    <visual><geometry><sphere radius="0.01"/></geometry><material name="red"/></visual>
+    <collision><geometry><sphere radius="0.01"/></geometry></collision>
+  </link>
+  <joint name="fr_foot_joint" type="fixed">
+    <parent link="fr_tibia"/>
+    <child link="fr_foot"/>
+    <origin xyz="0.121 0 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Leg 4: Rear-Right (rr) -->
+  <link name="rr_coxa">
+    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/></inertial>
+    <visual><origin xyz="0.0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/coxa.stl" scale="0.001 0.001 0.001"/></geometry><material name="black"/></visual>
+    <collision><origin xyz="0.0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/coxa.stl" scale="0.001 0.001 0.001"/></geometry></collision>
+  </link>
+  <joint name="rr_coxa_joint" type="revolute">
+    <parent link="main_body"/>
+    <child link="rr_coxa"/>
+    <!-- Titik Coxa Leg 4: Belakang Kanan (-X, +Y) -->
+    <origin xyz="-0.0525 0.047 0.020" rpy="0 0 3.14159"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.0" upper="1.0" effort="5.0" velocity="5.0"/>
+    <dynamics damping="0.05" friction="0.01"/>
+  </joint>
+
+  <link name="rr_femur">
+    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.15"/><inertia ixx="0.0002" ixy="0" ixz="0" iyy="0.0002" iyz="0" izz="0.0002"/></inertial>
+    <visual><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/femur.stl" scale="0.001 0.001 0.001"/></geometry><material name="white"/></visual>
+    <collision><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/femur.stl" scale="0.001 0.001 0.001"/></geometry></collision>
+  </link>
+  <joint name="rr_femur_joint" type="revolute">
+    <parent link="rr_coxa"/>
+    <child link="rr_femur"/>
+    <origin xyz="0.0275 0 -0.01" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-1.2" upper="1.2" effort="6.0" velocity="5.0"/>
+    <dynamics damping="0.05" friction="0.01"/>
+  </joint>
+
+  <link name="rr_tibia">
+    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/></inertial>
+    <visual><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/tibia.stl" scale="0.001 0.001 0.001"/></geometry><material name="black"/></visual>
+    <collision><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/tibia.stl" scale="0.001 0.001 0.001"/></geometry></collision>
+  </link>
+  <joint name="rr_tibia_joint" type="revolute">
+    <parent link="rr_femur"/>
+    <child link="rr_tibia"/>
+    <origin xyz="0.10 0 0.0" rpy="0 0 0"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="-3.0" upper="3.0" effort="6.0" velocity="5.0"/>
+    <dynamics damping="0.05" friction="0.01"/>
+  </joint>
+
+  <link name="rr_foot">
+    <inertial><mass value="0.02"/><inertia ixx="0.00001" ixy="0" ixz="0" iyy="0.00001" iyz="0" izz="0.00001"/></inertial>
+    <visual><geometry><sphere radius="0.01"/></geometry><material name="red"/></visual>
+    <collision><geometry><sphere radius="0.01"/></geometry></collision>
+  </link>
+  <joint name="rr_foot_joint" type="fixed">
+    <parent link="rr_tibia"/>
+    <child link="rr_foot"/>
+    <origin xyz="0.121 0 0.0" rpy="0 0 0"/>
+  </joint>
+
+</robot>

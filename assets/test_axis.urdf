@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<robot name="test_axis_robot">
+  <!-- Material Definitions -->
+  <material name="white"><color rgba="1.0 1.0 1.0 1.0"/></material>
+  <material name="red"><color rgba="1.0 0.0 0.0 1.0"/></material>
+  <material name="green"><color rgba="0.0 1.0 0.0 1.0"/></material>
+  <material name="blue"><color rgba="0.0 0.0 1.0 1.0"/></material>
+  <material name="black"><color rgba="0.1 0.1 0.1 1.0"/></material>
+
+  <!-- Kotak at center (0,0,0) -->
+  <link name="test_kotak_link">
+    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="1.0"/><inertia ixx="0.1" ixy="0" ixz="0" iyy="0.1" iyz="0" izz="0.1"/></inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="meshes/test_kotak.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="meshes/test_kotak.stl" scale="0.001 0.001 0.001"/></geometry>
+    </collision>
+  </link>
+
+  <!-- Tabung Merah at (1, 1, 0) -->
+  <link name="tabung_merah_link">
+    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/></inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="meshes/tabung.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="red"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="meshes/tabung.stl" scale="0.001 0.001 0.001"/></geometry>
+    </collision>
+  </link>
+  <joint name="joint_merah" type="fixed">
+    <parent link="test_kotak_link"/>
+    <child link="tabung_merah_link"/>
+    <origin xyz="1 1 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Tabung Hijau at (1, -1, 0) -->
+  <link name="tabung_hijau_link">
+    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/></inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="meshes/tabung.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="green"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="meshes/tabung.stl" scale="0.001 0.001 0.001"/></geometry>
+    </collision>
+  </link>
+  <joint name="joint_hijau" type="fixed">
+    <parent link="test_kotak_link"/>
+    <child link="tabung_hijau_link"/>
+    <origin xyz="1 -1 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Tabung Biru at (-1, 1, 0) -->
+  <link name="tabung_biru_link">
+    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/></inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="meshes/tabung.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="meshes/tabung.stl" scale="0.001 0.001 0.001"/></geometry>
+    </collision>
+  </link>
+  <joint name="joint_biru" type="fixed">
+    <parent link="test_kotak_link"/>
+    <child link="tabung_biru_link"/>
+    <origin xyz="-1 1 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Tabung Hitam at (-1, -1, 0) -->
+  <link name="tabung_hitam_link">
+    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.01" ixy="0" ixz="0" iyy="0.01" iyz="0" izz="0.01"/></inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="meshes/tabung.stl" scale="0.001 0.001 0.001"/></geometry>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="meshes/tabung.stl" scale="0.001 0.001 0.001"/></geometry>
+    </collision>
+  </link>
+  <joint name="joint_hitam" type="fixed">
+    <parent link="test_kotak_link"/>
+    <child link="tabung_hitam_link"/>
+    <origin xyz="-1 -1 0" rpy="0 0 0"/>
+  </joint>
+</robot>
