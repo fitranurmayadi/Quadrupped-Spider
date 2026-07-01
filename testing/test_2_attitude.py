@@ -243,32 +243,37 @@ def test_directional_movement(tester, motion_type="maju", duration=4.0):
         targets['fr_tibia_joint'] = 2.80 - 0.40 * max(0, phase2)
 
         if motion_type == "maju":
-            # Maju is -Y direction
-            targets['fl_coxa_joint'] = -0.50 - 0.25 * phase1
-            targets['rr_coxa_joint'] = -0.50 + 0.25 * phase1
-            targets['rl_coxa_joint'] = 0.50 - 0.25 * phase2
-            targets['fr_coxa_joint'] = 0.50 + 0.25 * phase2
-            
-        elif motion_type == "mundur":
-            # Mundur is +Y direction
+            # Maju is -Y direction (forward)
+            # Left legs positive phase, right legs negative phase → net -Y thrust
             targets['fl_coxa_joint'] = -0.50 + 0.25 * phase1
             targets['rr_coxa_joint'] = -0.50 - 0.25 * phase1
             targets['rl_coxa_joint'] = 0.50 + 0.25 * phase2
             targets['fr_coxa_joint'] = 0.50 - 0.25 * phase2
+            
+        elif motion_type == "mundur":
+            # Mundur is +Y direction (backward)
+            # Opposite phase signs from maju
+            targets['fl_coxa_joint'] = -0.50 - 0.25 * phase1
+            targets['rr_coxa_joint'] = -0.50 + 0.25 * phase1
+            targets['rl_coxa_joint'] = 0.50 - 0.25 * phase2
+            targets['fr_coxa_joint'] = 0.50 + 0.25 * phase2
             
         elif motion_type == "kiri":
             # Kiri is +X direction (Left)
-            targets['fl_coxa_joint'] = -0.50 - 0.25 * phase1
-            targets['rr_coxa_joint'] = -0.50 + 0.25 * phase1
-            targets['rl_coxa_joint'] = 0.50 - 0.25 * phase2
-            targets['fr_coxa_joint'] = 0.50 + 0.25 * phase2
+            # Front legs positive phase, rear legs negative phase → net +X thrust
+            # Y-components from front and rear cancel each other out
+            targets['fl_coxa_joint'] = -0.50 + 0.25 * phase1   # front: positive
+            targets['rr_coxa_joint'] = -0.50 - 0.25 * phase1   # rear: negative
+            targets['rl_coxa_joint'] = 0.50 - 0.25 * phase2    # rear: negative
+            targets['fr_coxa_joint'] = 0.50 + 0.25 * phase2    # front: positive
             
         elif motion_type == "kanan":
             # Kanan is -X direction (Right)
-            targets['fl_coxa_joint'] = -0.50 + 0.25 * phase1
-            targets['rr_coxa_joint'] = -0.50 - 0.25 * phase1
-            targets['rl_coxa_joint'] = 0.50 + 0.25 * phase2
-            targets['fr_coxa_joint'] = 0.50 - 0.25 * phase2
+            # Opposite phase signs from kiri
+            targets['fl_coxa_joint'] = -0.50 - 0.25 * phase1   # front: negative
+            targets['rr_coxa_joint'] = -0.50 + 0.25 * phase1   # rear: positive
+            targets['rl_coxa_joint'] = 0.50 + 0.25 * phase2    # rear: positive
+            targets['fr_coxa_joint'] = 0.50 - 0.25 * phase2    # front: negative
             
         elif motion_type == "putar_kiri":
             # CCW (+Yaw)

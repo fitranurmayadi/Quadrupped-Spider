@@ -1,10 +1,8 @@
 # Quadruped Spider Robot 🕷️
 
-<p align="center">
-  <img src="docs/spider_preview.png" alt="Quadruped Spider Robot" width="600"/>
-</p>
+A **4-legged quadruped spider robot** simulation and locomotion control workspace built with **PyBullet**. The 3D model is designed in **FreeCAD** and exported as STL meshes for physics simulation.
 
-A **4-legged quadruped spider robot** simulation and reinforcement learning environment built with **PyBullet** and **Gymnasium**. The 3D model is designed in **FreeCAD** and exported as STL meshes for physics simulation.
+This project implements a high-performance **Analytical Inverse Kinematics (IK)** solver and a **Diagonal Trot Gait Generator** with dynamic trajectory shaping, allowing stable conventional control without relying on Reinforcement Learning.
 
 ---
 
@@ -13,11 +11,11 @@ A **4-legged quadruped spider robot** simulation and reinforcement learning envi
 - [Features](#-features)
 - [Project Structure](#-project-structure)
 - [Coordinate System](#-coordinate-system)
+- [Kinematics & Control](#-kinematics--control)
 - [Installation](#-installation)
 - [Usage](#-usage)
+- [Locomotion Versions (V1 vs V2)](#-locomotion-versions-v1-vs-v2)
 - [Testing](#-testing)
-- [Reinforcement Learning](#-reinforcement-learning)
-- [Kinematics](#-kinematics)
 - [Physics Parameters](#-physics-parameters)
 
 ---
@@ -26,11 +24,11 @@ A **4-legged quadruped spider robot** simulation and reinforcement learning envi
 
 - **Realistic 3D model** — Body, coxa, femur, and tibia meshes exported from FreeCAD
 - **PyBullet physics** — Accurate rigid-body dynamics with joint damping, friction, and contact forces
-- **Gymnasium environment** — Fully compatible with Stable-Baselines3 for RL training
-- **Diagonal trot gait** — Forward, backward, lateral, and rotational locomotion
-- **Attitude control** — Pitch/Roll body tilting via differential leg height
-- **Interactive calibration** — Real-time slider-based joint tuning tool
-- **Comprehensive tests** — Standing stability and locomotion direction tests
+- **Analytical Inverse Kinematics (IK)** — Custom 3-DOF per-leg closed-form solver with perfect reconstruction accuracy ($0.00$ m error)
+- **Smooth Trajectory Planning** — Parabolic vertical swing curves and horizontal cosine acceleration profiles to prevent joint impact shocks
+- **Stance Overlap (Double Support)** — Configurable duty factor (e.g. 55%) ensuring a stable 4-foot stance phase during step transitions
+- **Dynamic Gait Scaling** — Automatically scales down step size and increases stance overlap as body height increases to stabilize the Center of Mass (CoM)
+- **Interactive Keyboard Control** — Real-time keyboard control (WASD/Arrows for translation, Q/E for turning, Z/X for height) with a 3rd-person follow camera
 
 ---
 
@@ -48,29 +46,30 @@ Quadrupped-Spider/
 │       ├── femur.stl         # Femur (upper leg) segment mesh
 │       └── tibia.stl         # Tibia (lower leg) segment mesh
 │
-├── envs/
-│   └── spider_env.py         # Gymnasium environment (SpiderEnv-v0)
+├── spider_ik.py              # Analytical Inverse Kinematics solver
+├── gait_controller.py        # Gait V1: Trot gait generator (standard splay)
+├── gait_controller_v2.py     # Gait V2: Trot gait with vertical tibia & dynamic splay
 │
 ├── testing/
 │   ├── test_1_standing.py    # Test 1: Standing stability test
-│   └── test_2_attitude.py    # Test 2: Attitude control & locomotion test
+│   └── test_2_attitude.py    # Test 2: Attitude control & motion test
 │
-├── freecad/                  # FreeCAD source files (.FCStd)
-├── models/                   # Saved RL model checkpoints
-├── tensorboard_logs/         # Training logs for TensorBoard
+├── walk_demo.py              # Demo script to walk exactly 1.0 meter forward
+├── keyboard_control.py       # Interactive keyboard control (Gait V1)
+├── keyboard_control_v2.py    # Interactive keyboard control (Gait V2, Vertical Tibia)
 │
-├── train.py                  # PPO training script
 ├── display_robot.py          # Visualize robot in PyBullet GUI
 ├── interactive_calibration.py# Interactive joint calibration tool
 ├── basic_axis_check.py       # Coordinate axis alignment verification
-└── requirements.txt
+├── requirements.txt          # Python dependencies
+└── README.md
 ```
 
 ---
 
 ## 🧭 Coordinate System
 
-This project uses **FreeCAD's default coordinate convention**, which differs from common robotics conventions:
+This project uses **FreeCAD's default coordinate convention**:
 
 | Direction | World Axis | Description |
 |-----------|-----------|-------------|
@@ -80,24 +79,28 @@ This project uses **FreeCAD's default coordinate convention**, which differs fro
 | **Right** (Kanan) | **−X** | Robot's right side |
 | **Up** | **+Z** | Vertical up |
 
-### Leg Positions
+---
 
-| Leg | Prefix | World Quadrant |
-|-----|--------|---------------|
-| Front-Left | `fl` | (+X, −Y) |
-| Rear-Left  | `rl` | (+X, +Y) |
-| Front-Right | `fr` | (−X, −Y) |
-| Rear-Right | `rr` | (−X, +Y) |
+## ⚙️ Kinematics & Control
 
-### Joint Neutral Standing Angles
+### Leg Degrees of Freedom (12 DOF Total)
 
-| Joint | fl | rl | fr | rr |
-|-------|----|----|----|----|
-| Coxa  | −0.5 rad | +0.5 rad | +0.5 rad | −0.5 rad |
-| Femur | −1.2 rad | −1.2 rad | −1.2 rad | −1.2 rad |
-| Tibia | +2.8 rad | +2.8 rad | +2.8 rad | +2.8 rad |
+Each of the 4 legs has **3 revolute joints**:
+```
+main_body
+  └─ coxa_joint  (Z-axis rotation, yaw/sweep)
+       └─ femur_joint  (Y-axis rotation, pitch up/down)
+            └─ tibia_joint  (Y-axis rotation, pitch up/down)
+                 └─ foot (fixed sphere, contact point)
+```
 
-> **Note:** Right-side legs (fr, rr) have their coxa joint rotated 180° in URDF (`rpy="0 0 3.14159"`), so positive coxa angles splay outward for both sides.
+### Analytical Inverse Kinematics
+
+The solver in `spider_ik.py` computes joint angles ($\theta_1, \theta_2, \theta_3$) for any foot target position $(x, y, z)$ relative to the leg base:
+1. **Coxa angle ($\theta_1$)**: $\text{atan2}(y, x)$
+2. **Femur ($\theta_2$) & Tibia ($\theta_3$)**: Solved using 2-Link Planar IK geometry in the leg plane:
+   $$\theta_2 = -\phi_2, \quad \theta_3 = -\phi_3$$
+   Where $\phi_3 = \text{atan2}(-\sqrt{1-D^2}, D)$ handles the elbow-down orientation.
 
 ---
 
@@ -106,7 +109,6 @@ This project uses **FreeCAD's default coordinate convention**, which differs fro
 ### Prerequisites
 
 - Python 3.9+
-- pip
 
 ### Steps
 
@@ -116,160 +118,59 @@ cd Quadrupped-Spider
 pip install -r requirements.txt
 ```
 
-### requirements.txt
-
-```
-gymnasium>=0.29.0
-pybullet>=3.2.5
-stable-baselines3>=2.0.0
-numpy>=1.22.0
-torch>=2.0.0
-tensorboard>=2.10.0
-```
-
 ---
 
 ## 🚀 Usage
 
-### Visualize the Robot
+### 🎮 Interactive Keyboard Control (Recommended)
 
+Run the **Vertical Tibia V2** interactive controller:
 ```bash
-python display_robot.py
+python keyboard_control_v2.py
 ```
+*Make sure to click/focus the PyBullet GUI window to capture keyboard input.*
 
-Opens PyBullet GUI showing the robot in its default standing pose.
+**Key Mappings:**
+- **`W` / `S` / `A` / `D`** (or **Arrow Keys**): Translate Maju, Mundur, Kiri, Kanan
+- **`Q` / `E`**: Rotate Turn Left / Turn Right
+- **`Z` / `X`**: Raise / Lower Body Height (1.5 cm to 7.5 cm)
+- **`R`**: Reset Robot Position & Height
+- **`ESC`**: Exit Simulation
 
-### Interactive Calibration Tool
+---
 
-```bash
-python interactive_calibration.py
-```
+## 🔄 Locomotion Versions (V1 vs V2)
 
-Opens PyBullet GUI with **debug sliders** to manually control all 12 joints, body position, and orientation. Press **`S`** to save current joint angles to `calibration_results.json`.
+### 🐾 Gait V1 (`gait_controller.py` & `keyboard_control.py`)
+- **Gait**: standard diagonal trot.
+- **Splay**: Fixed footprint width.
+- **Camera**: Top-down view.
 
-### Axis Alignment Check
-
-```bash
-python basic_axis_check.py
-```
-
-Displays a white reference box at origin and colored cylinders at each axis quadrant to visually verify the FreeCAD → PyBullet coordinate mapping.
+### 🐾 Gait V2 (`gait_controller_v2.py` & `keyboard_control_v2.py`)
+- **Vertical Tibia**: Femur and Tibia angles are automatically constrained to keep the tibia link at exactly **$90^\circ$ vertical** to the ground when standing.
+- **Dynamic Footprint Splay**: The horizontal foot placement distance ($r$) is calculated dynamically from the height:
+  $$r = \sqrt{L_2^2 - (z_{\text{proj}} + L_3)^2}$$
+  - Raising the body (**`Z`**) pulls the legs inward.
+  - Lowering the body (**`X`**) spreads the legs outward.
+- **Stance Overlap (Double Support)**: `duty_factor` of 0.55 ensures all four feet remain on the ground for 10% of the cycle time during step transitions.
+- **Cosine Swing Profile**: Reduces foot horizontal speed to zero before touchdown to prevent hard impacts.
+- **Dynamic Gait Scaling**: Shuts down step length and height (down to 50%) at high heights to stabilize the Center of Mass (CoM).
+- **Camera**: Low-angle third-person tracking view.
 
 ---
 
 ## 🧪 Testing
 
-### Test 1: Standing Stability
-
-Verifies the robot can maintain a stable standing pose for an extended duration.
-
+### Walk 1 Meter forward
+Runs the robot forward exactly 1.0 meter and terminates.
 ```bash
-python testing/test_1_standing.py              # GUI mode
-python testing/test_1_standing.py --headless   # Headless (faster)
-python testing/test_1_standing.py --headless --duration 10.0
+python walk_demo.py --headless
 ```
 
-**Pass criteria:**
-- Average body height > 0.02 m over last 2 seconds
-- Body tilt (Roll, Pitch) < 0.3 rad
-- ≥ 3 feet in ground contact
-
-**Expected output:**
-```
-t=1.0s | Posisi (X,Y,Z): [0.000, 0.000, 0.028] m | Orientasi (R,P,Y): [0.000, 0.000, 0.000] rad | Kaki Menapak: 4/4
-...
-[STATUS] >>> TEST BERDIRI TEGAK: PASSED / LULUS <<<
-```
-
-### Test 2: Attitude Control & Locomotion
-
-Tests body attitude control (Pitch/Roll) and directional locomotion (6 directions).
-
+### Standing Stability Check
 ```bash
-python testing/test_2_attitude.py              # GUI mode
-python testing/test_2_attitude.py --headless   # Headless
-python testing/test_2_attitude.py --headless --duration 3.0
+python testing/test_1_standing.py --headless
 ```
-
-**Tested motions:**
-
-| Mode | Expected | Axis |
-|------|---------|------|
-| `maju` (forward) | dY < 0 | −Y |
-| `mundur` (backward) | dY > 0 | +Y |
-| `kiri` (left) | dX > 0 | +X |
-| `kanan` (right) | dX < 0 | −X |
-| `putar_kiri` (CCW) | dYaw > 0 | +Z rotation |
-| `putar_kanan` (CW) | dYaw < 0 | −Z rotation |
-
----
-
-## 🤖 Reinforcement Learning
-
-### Training
-
-```bash
-python train.py --timesteps 500000 --envs 4
-```
-
-| Argument | Default | Description |
-|----------|---------|-------------|
-| `--timesteps` | 100000 | Total RL training steps |
-| `--envs` | 4 | Parallel environments |
-
-**Algorithm:** PPO (Proximal Policy Optimization) via Stable-Baselines3
-
-**Reward function:**
-- `+forward_velocity × 10.0` — reward for moving in −Y direction
-- `+0.5` — survival reward per step
-- `−0.001 × Σ(action²)` — torque efficiency penalty
-- `−1.0 × (|roll| + |pitch|)` — orientation stability penalty
-- `−10.0` — termination penalty (fall / tilt > 0.8 rad / height < 0.05 m)
-
-### Monitor Training
-
-```bash
-tensorboard --logdir ./tensorboard_logs
-```
-
-### Observation Space (37 dimensions)
-
-| Component | Dims | Description |
-|-----------|------|-------------|
-| Euler orientation | 3 | Roll, Pitch, Yaw |
-| Angular velocity | 3 | Body angular rates |
-| Linear velocity | 3 | Body linear velocity |
-| Joint positions | 12 | All 12 revolute joints |
-| Joint velocities | 12 | All 12 joint velocities |
-| Foot contacts | 4 | Binary contact per foot |
-
-### Action Space (12 dimensions)
-
-Normalized joint position targets in `[−1.0, 1.0]`, scaled to each joint's URDF limits.
-
----
-
-## ⚙️ Kinematics
-
-### Leg DOF
-
-Each leg has **3 revolute joints**:
-
-```
-main_body
-  └─ coxa_joint  (Z-axis rotation, yaw/sweep)
-       └─ femur_joint  (Y-axis rotation, pitch up/down)
-            └─ tibia_joint  (Y-axis rotation, pitch up/down)
-                 └─ foot (fixed sphere, contact point)
-```
-
-### Diagonal Trot Gait
-
-Locomotion uses a **diagonal trot** pattern:
-- **Pair 1** (swing phase A): `fl` + `rr`
-- **Pair 2** (swing phase B): `rl` + `fr`
-
-The two pairs oscillate 180° out of phase. Coxa sweeps generate forward/backward/lateral motion; femur/tibia reduce angle during swing to lift the foot.
 
 ---
 
@@ -279,23 +180,10 @@ The two pairs oscillate 180° out of phase. Coxa sweeps generate forward/backwar
 |-----------|-------|-------|
 | Simulation timestep | 1/240 s | PyBullet standard |
 | Gravity | −9.81 m/s² | Earth gravity |
-| Floor friction (lateral) | 0.8 | Rubber/concrete |
-| Floor friction (spinning) | 0.05 | |
-| Floor friction (rolling) | 0.02 | |
-| Foot friction (lateral) | 1.5 | Rubber tip |
-| Foot friction (spinning) | 0.3 | |
-| Contact stiffness (foot) | 5000 | |
-| Contact damping (foot) | 100 | |
-| Joint damping | 0.05 | All revolute joints |
-| Joint friction | 0.01 | All revolute joints |
-| Coxa effort limit | 5.0 N | |
-| Femur/Tibia effort limit | 6.0 N | |
-
----
-
-## 📄 License
-
-This project is open-source. See [LICENSE](LICENSE) for details.
+| Floor friction (lateral) | 0.8 | Concrete/Rubber |
+| Foot friction (lateral) | 1.5 | High-grip rubber tips |
+| Joint damping | 0.05 | Damping for all joints |
+| Joint friction | 0.01 | Friction for all joints |
 
 ---
 
