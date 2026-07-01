@@ -1,5 +1,9 @@
 # Quadruped Spider Robot 🕷️
 
+<p align="center">
+  <img src="docs/spider_preview.png" alt="Quadruped Spider Robot" width="600"/>
+</p>
+
 A **4-legged quadruped spider robot** simulation and locomotion control workspace built with **PyBullet**. The 3D model is designed in **FreeCAD** and exported as STL meshes for physics simulation.
 
 This project implements a high-performance **Analytical Inverse Kinematics (IK)** solver and a **Diagonal Trot Gait Generator** with dynamic trajectory shaping, allowing stable conventional control without relying on Reinforcement Learning.
