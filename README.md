@@ -46,21 +46,31 @@ Quadrupped-Spider/
 │       ├── femur.stl         # Femur (upper leg) segment mesh
 │       └── tibia.stl         # Tibia (lower leg) segment mesh
 │
-├── spider_ik.py              # Analytical Inverse Kinematics solver
-├── gait_controller.py        # Gait V1: Trot gait generator (standard splay)
-├── gait_controller_v2.py     # Gait V2: Trot gait with vertical tibia & dynamic splay
+├── docs/
+│   └── spider_preview.png    # Robot preview screenshot
+│
+├── images/
+│   └── image.png             # Raw screenshot folder
+│
+├── src/
+│   ├── __init__.py           # Package initializer
+│   ├── spider_ik.py          # Analytical Inverse Kinematics solver
+│   ├── gait_controller.py    # Gait V1: Trot gait generator (standard splay)
+│   └── gait_controller_v2.py # Gait V2: Trot gait with vertical tibia & dynamic splay
 │
 ├── testing/
 │   ├── test_1_standing.py    # Test 1: Standing stability test
 │   └── test_2_attitude.py    # Test 2: Attitude control & motion test
 │
+├── tools/
+│   ├── basic_axis_check.py   # Coordinate axis alignment verification
+│   ├── interactive_calibration.py # Interactive joint calibration tool
+│   └── calibration_results.json   # Calibration saved configurations
+│
 ├── walk_demo.py              # Demo script to walk exactly 1.0 meter forward
 ├── keyboard_control.py       # Interactive keyboard control (Gait V1)
 ├── keyboard_control_v2.py    # Interactive keyboard control (Gait V2, Vertical Tibia)
-│
 ├── display_robot.py          # Visualize robot in PyBullet GUI
-├── interactive_calibration.py# Interactive joint calibration tool
-├── basic_axis_check.py       # Coordinate axis alignment verification
 ├── requirements.txt          # Python dependencies
 └── README.md
 ```

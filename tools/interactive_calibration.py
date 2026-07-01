@@ -38,7 +38,7 @@ def main():
     p.changeDynamics(plane_id, -1, lateralFriction=1.5)
 
     # 3. Muat Robot Spider
-    urdf_path = os.path.join(os.path.dirname(__file__), "assets", "spider.urdf")
+    urdf_path = os.path.join(os.path.dirname(__file__), "..", "assets", "spider.urdf")
     urdf_path = os.path.abspath(urdf_path)
     
     start_pos = [0, 0, 0.21]
@@ -212,8 +212,8 @@ def main():
                     "joint_angles": current_joint_targets
                 }
 
-                # Simpan ke calibration_results.json
-                calib_file = "calibration_results.json"
+                # Simpan ke calibration_results.json di folder tools
+                calib_file = os.path.join(os.path.dirname(__file__), "calibration_results.json")
                 existing_data = []
                 if os.path.exists(calib_file):
                     try:

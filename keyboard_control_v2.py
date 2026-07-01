@@ -7,7 +7,7 @@ import pybullet_data
 
 # Ensure we can import spider_ik and gait_controller_v2
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from gait_controller_v2 import GaitControllerV2
+from src.gait_controller_v2 import GaitControllerV2
 
 def main():
     print("==================================================")

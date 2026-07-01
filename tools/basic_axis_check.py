@@ -11,7 +11,7 @@ p.setAdditionalSearchPath(pybullet_data.getDataPath())
 p.loadURDF("plane.urdf")
 
 # Dapatkan absolute path URDF
-urdf_path = os.path.abspath(os.path.join(os.getcwd(), "assets", "test_axis.urdf"))
+urdf_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "assets", "test_axis.urdf"))
 
 print(f"Memuat URDF uji sumbu: {urdf_path}...")
 robot_id = p.loadURDF(urdf_path, [0, 0, 0.0], flags=p.URDF_USE_INERTIA_FROM_FILE)

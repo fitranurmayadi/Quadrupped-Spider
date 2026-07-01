@@ -1,5 +1,5 @@
 import numpy as np
-from spider_ik import leg_fk, leg_ik, L1, L2, L3, Z_OFFSET, LEG_ORIGINS, LEG_ROTATIONS
+from src.spider_ik import leg_fk, leg_ik, L1, L2, L3, Z_OFFSET, LEG_ORIGINS, LEG_ROTATIONS
 
 class GaitControllerV2:
     def __init__(self, step_length=0.06, step_height=0.025, frequency=2.5, body_z=-0.028, duty_factor=0.55):
