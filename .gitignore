@@ -45,6 +45,3 @@ Thumbs.db
 
 # FreeCAD backup
 freecad/*.FCBak
-
-# Docs generated
-docs/
