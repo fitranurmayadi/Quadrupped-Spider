@@ -179,6 +179,14 @@ python keyboard_control_v2.py
 - **V2 Features Included**: Integrates the vertical tibia constraint, dynamic splay, and smooth cosine swing profiles.
 - **Camera**: 3rd-person follow camera.
 
+### 🤖 Gait V4 (`autonomous_navigation.py`)
+- **Autonomous Navigation & Obstacle Avoidance**: Fully autonomous locomotion from start to target coordinates.
+- **Raycast LiDAR**: Simulates a 17-ray LiDAR (30 cm range) covering a 160-degree front arc to detect obstacles.
+- **Artificial Potential Field (APF)**: Steering is powered by an APF with a custom curl force (hysteresis/cooldown memory) that efficiently prevents local minima traps and pushes the robot around obstacles.
+- **Escape Maneuver**: Robust 3.0-second sliding-window displacement check detects if the robot is physically stuck, triggering a timed reverse + hard-yaw escape sequence.
+- **Procedural Obstacles**: Procedurally generates random block arenas with dynamically scaled 100–110 cm navigable gaps.
+- **Headless & CI-Ready**: Fully optimized 240 Hz loop, supporting `--headless` execution for fast testing/validation.
+
 ---
 
 ## 🧪 Testing
