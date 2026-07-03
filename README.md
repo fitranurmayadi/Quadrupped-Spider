@@ -60,7 +60,8 @@ Quadrupped-Spider/
 │   ├── __init__.py           # Package initializer
 │   ├── spider_ik.py          # Analytical Inverse Kinematics solver
 │   ├── gait_controller.py    # Gait V1: Trot gait generator (standard splay)
-│   └── gait_controller_v2.py # Gait V2: Trot gait with vertical tibia & dynamic splay
+│   ├── gait_controller_v2.py # Gait V2: Trot gait with vertical tibia & dynamic splay
+│   └── gait_controller_v3.py # Gait V3: Crawl gait with dynamic CoM shifting
 │
 ├── testing/
 │   ├── test_1_standing.py    # Test 1: Standing stability test
@@ -74,6 +75,7 @@ Quadrupped-Spider/
 ├── walk_demo.py              # Demo script to walk exactly 1.0 meter forward
 ├── keyboard_control.py       # Interactive keyboard control (Gait V1)
 ├── keyboard_control_v2.py    # Interactive keyboard control (Gait V2, Vertical Tibia)
+├── keyboard_control_v3.py    # Interactive keyboard control (Gait V3, Crawl Gait)
 ├── display_robot.py          # Visualize robot in PyBullet GUI
 ├── requirements.txt          # Python dependencies
 └── README.md
@@ -170,6 +172,12 @@ python keyboard_control_v2.py
 - **Cosine Swing Profile**: Reduces foot horizontal speed to zero before touchdown to prevent hard impacts.
 - **Dynamic Gait Scaling**: Shuts down step length and height (down to 50%) at high heights to stabilize the Center of Mass (CoM).
 - **Camera**: Low-angle third-person tracking view.
+
+### 🐾 Gait V3 (`gait_controller_v3.py` & `keyboard_control_v3.py`)
+- **Static Stability**: **3 legs always touch the ground** at any time. Only 1 leg swings in sequence (FL -> RR -> FR -> RL) using a 75% stance duty factor.
+- **CoM Shifting**: Before any leg swings, the body center is dynamically shifted towards the centroid of the remaining 3 support legs to maintain static balance.
+- **V2 Features Included**: Integrates the vertical tibia constraint, dynamic splay, and smooth cosine swing profiles.
+- **Camera**: 3rd-person follow camera.
 
 ---
 
