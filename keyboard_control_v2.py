@@ -41,7 +41,7 @@ def main():
     plane_id = p.loadURDF("plane.urdf", physicsClientId=client)
     urdf_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "assets", "spider.urdf"))
     
-    start_pos = [0, 0, 0.05]
+    start_pos = [0, 0, 0.08]
     start_orientation = p.getQuaternionFromEuler([0, 0, 0])
     
     robot_id = p.loadURDF(
@@ -92,7 +92,7 @@ def main():
                              physicsClientId=client)
 
     # 3. Initialize Gait Controller V2 (Tibia standing angle = 2.7708)
-    gait = GaitControllerV2(step_length=0.06, step_height=0.025, frequency=3.5, body_z=-0.028)
+    gait = GaitControllerV2(step_length=0.06, step_height=0.025, frequency=3.5, body_z=-0.060)
 
     # Function to reset joints to splayed standing pose (with exactly vertical tibia)
     def reset_pose():
@@ -164,7 +164,7 @@ def main():
                 
             if ord('r') in keys and keys[ord('r')] & 1:
                 reset_pose()
-                gait.body_z = -0.028
+                gait.body_z = -0.060
                 sim_time = 0.0
                 status_text_id = p.addUserDebugText(
                     text=f"Body Height: {-gait.body_z * 100:.1f} cm",
@@ -185,7 +185,7 @@ def main():
                 height_changed = True
                 
             if height_changed:
-                gait.body_z = np.clip(gait.body_z, -0.075, -0.015)
+                gait.body_z = np.clip(gait.body_z, -0.100, -0.040)
                 status_text_id = p.addUserDebugText(
                     text=f"Body Height: {-gait.body_z * 100:.1f} cm",
                     textPosition=[-0.18, -0.18, 0.13],

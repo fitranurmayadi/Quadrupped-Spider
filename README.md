@@ -149,7 +149,7 @@ python keyboard_control_v2.py
 **Key Mappings:**
 - **`W` / `S` / `A` / `D`** (or **Arrow Keys**): Translate Maju, Mundur, Kiri, Kanan
 - **`Q` / `E`**: Rotate Turn Left / Turn Right
-- **`Z` / `X`**: Raise / Lower Body Height (1.5 cm to 7.5 cm)
+- **`Z`** / **`X`**: Raise / Lower Body Height (4.0 cm to 10.0 cm)
 - **`R`**: Reset Robot Position & Height
 - **`ESC`**: Exit Simulation
 
