@@ -92,7 +92,7 @@ def main():
                              physicsClientId=client)
 
     # 3. Initialize Gait Controller V2 (Tibia standing angle = 2.7708)
-    gait = GaitControllerV2(step_length=0.06, step_height=0.025, frequency=2.5, body_z=-0.028)
+    gait = GaitControllerV2(step_length=0.06, step_height=0.025, frequency=3.5, body_z=-0.028)
 
     # Function to reset joints to splayed standing pose (with exactly vertical tibia)
     def reset_pose():
@@ -232,7 +232,7 @@ def main():
                         jointIndex=joint_map[j_name],
                         controlMode=p.POSITION_CONTROL,
                         targetPosition=target_angle,
-                        force=10.0,
+                        force=12.0,
                         maxVelocity=5.0,
                         physicsClientId=client
                     )
@@ -244,7 +244,7 @@ def main():
             pos, orn = p.getBasePositionAndOrientation(robot_id, physicsClientId=client)
             euler = p.getEulerFromQuaternion(orn)
             yaw_robot = euler[2]
-            cam_yaw = -90.0 - np.degrees(yaw_robot)
+            cam_yaw = -90.0
             
             p.resetDebugVisualizerCamera(
                 cameraDistance=cam_distance,

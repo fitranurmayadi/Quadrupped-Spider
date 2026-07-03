@@ -98,8 +98,8 @@ class GaitControllerV2:
                 height_ratio = np.clip((height_val - 0.028) / (0.075 - 0.028), 0.0, 1.0)
                 
                 # Scale step length and height down when taller to reduce roll/pitch perturbation
-                active_step_length = self.step_length * speed_factor * (1.0 - 0.5 * height_ratio)
-                active_step_height = self.step_height * speed_factor * (1.0 - 0.4 * height_ratio)
+                active_step_length = self.step_length * speed_factor * (1.0 - 0.3 * height_ratio)
+                active_step_height = self.step_height * speed_factor * (1.0 - 0.2 * height_ratio)
                 
                 # Increase duty factor (stance overlap) up to 0.60 when taller to increase support time
                 active_duty_factor = self.duty_factor + 0.05 * height_ratio
