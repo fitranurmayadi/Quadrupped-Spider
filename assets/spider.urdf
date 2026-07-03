@@ -26,7 +26,7 @@
     <inertial>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <mass value="1.4"/>
-      <inertia ixx="0.003" ixy="0" ixz="0" iyy="0.003" iyz="0" izz="0.005"/>
+      <inertia ixx="0.0058" ixy="0" ixz="0" iyy="0.0058" iyz="0" izz="0.0093"/>
     </inertial>
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -45,7 +45,7 @@
 
   <!-- Leg 1: Front-Left (fl) -->
   <link name="fl_coxa">
-    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/></inertial>
+    <inertial><origin xyz="0.0137 0 -0.005" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.000003" ixy="0" ixz="0" iyy="0.000006" iyz="0" izz="0.000006"/></inertial>
     <visual><origin xyz="0.0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/coxa.stl" scale="0.001 0.001 0.001"/></geometry><material name="black"/></visual>
     <collision><origin xyz="0.0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/coxa.stl" scale="0.001 0.001 0.001"/></geometry></collision>
   </link>
@@ -60,7 +60,7 @@
   </joint>
 
   <link name="fl_femur">
-    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.15"/><inertia ixx="0.0002" ixy="0" ixz="0" iyy="0.0002" iyz="0" izz="0.0002"/></inertial>
+    <inertial><origin xyz="0.05 0 0" rpy="0 0 0"/><mass value="0.15"/><inertia ixx="0.00001" ixy="0" ixz="0" iyy="0.000125" iyz="0" izz="0.000125"/></inertial>
     <visual><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/femur.stl" scale="0.001 0.001 0.001"/></geometry><material name="white"/></visual>
     <collision><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/femur.stl" scale="0.001 0.001 0.001"/></geometry></collision>
   </link>
@@ -74,7 +74,7 @@
   </joint>
 
   <link name="fl_tibia">
-    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/></inertial>
+    <inertial><origin xyz="0.06 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.000005" ixy="0" ixz="0" iyy="0.000122" iyz="0" izz="0.000122"/></inertial>
     <visual><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/tibia.stl" scale="0.001 0.001 0.001"/></geometry><material name="black"/></visual>
     <collision><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/tibia.stl" scale="0.001 0.001 0.001"/></geometry></collision>
   </link>
@@ -100,7 +100,7 @@
 
   <!-- Leg 2: Rear-Left (rl) -->
   <link name="rl_coxa">
-    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/></inertial>
+    <inertial><origin xyz="0.0137 0 -0.005" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.000003" ixy="0" ixz="0" iyy="0.000006" iyz="0" izz="0.000006"/></inertial>
     <visual><origin xyz="0.0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/coxa.stl" scale="0.001 0.001 0.001"/></geometry><material name="black"/></visual>
     <collision><origin xyz="0.0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/coxa.stl" scale="0.001 0.001 0.001"/></geometry></collision>
   </link>
@@ -115,7 +115,7 @@
   </joint>
 
   <link name="rl_femur">
-    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.15"/><inertia ixx="0.0002" ixy="0" ixz="0" iyy="0.0002" iyz="0" izz="0.0002"/></inertial>
+    <inertial><origin xyz="0.05 0 0" rpy="0 0 0"/><mass value="0.15"/><inertia ixx="0.00001" ixy="0" ixz="0" iyy="0.000125" iyz="0" izz="0.000125"/></inertial>
     <visual><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/femur.stl" scale="0.001 0.001 0.001"/></geometry><material name="white"/></visual>
     <collision><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/femur.stl" scale="0.001 0.001 0.001"/></geometry></collision>
   </link>
@@ -129,7 +129,7 @@
   </joint>
 
   <link name="rl_tibia">
-    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/></inertial>
+    <inertial><origin xyz="0.06 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.000005" ixy="0" ixz="0" iyy="0.000122" iyz="0" izz="0.000122"/></inertial>
     <visual><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/tibia.stl" scale="0.001 0.001 0.001"/></geometry><material name="black"/></visual>
     <collision><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/tibia.stl" scale="0.001 0.001 0.001"/></geometry></collision>
   </link>
@@ -155,7 +155,7 @@
 
   <!-- Leg 3: Front-Right (fr) -->
   <link name="fr_coxa">
-    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/></inertial>
+    <inertial><origin xyz="0.0137 0 -0.005" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.000003" ixy="0" ixz="0" iyy="0.000006" iyz="0" izz="0.000006"/></inertial>
     <visual><origin xyz="0.0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/coxa.stl" scale="0.001 0.001 0.001"/></geometry><material name="black"/></visual>
     <collision><origin xyz="0.0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/coxa.stl" scale="0.001 0.001 0.001"/></geometry></collision>
   </link>
@@ -170,7 +170,7 @@
   </joint>
 
   <link name="fr_femur">
-    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.15"/><inertia ixx="0.0002" ixy="0" ixz="0" iyy="0.0002" iyz="0" izz="0.0002"/></inertial>
+    <inertial><origin xyz="0.05 0 0" rpy="0 0 0"/><mass value="0.15"/><inertia ixx="0.00001" ixy="0" ixz="0" iyy="0.000125" iyz="0" izz="0.000125"/></inertial>
     <visual><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/femur.stl" scale="0.001 0.001 0.001"/></geometry><material name="white"/></visual>
     <collision><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/femur.stl" scale="0.001 0.001 0.001"/></geometry></collision>
   </link>
@@ -184,7 +184,7 @@
   </joint>
 
   <link name="fr_tibia">
-    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/></inertial>
+    <inertial><origin xyz="0.06 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.000005" ixy="0" ixz="0" iyy="0.000122" iyz="0" izz="0.000122"/></inertial>
     <visual><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/tibia.stl" scale="0.001 0.001 0.001"/></geometry><material name="black"/></visual>
     <collision><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/tibia.stl" scale="0.001 0.001 0.001"/></geometry></collision>
   </link>
@@ -210,7 +210,7 @@
 
   <!-- Leg 4: Rear-Right (rr) -->
   <link name="rr_coxa">
-    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/></inertial>
+    <inertial><origin xyz="0.0137 0 -0.005" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.000003" ixy="0" ixz="0" iyy="0.000006" iyz="0" izz="0.000006"/></inertial>
     <visual><origin xyz="0.0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/coxa.stl" scale="0.001 0.001 0.001"/></geometry><material name="black"/></visual>
     <collision><origin xyz="0.0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/coxa.stl" scale="0.001 0.001 0.001"/></geometry></collision>
   </link>
@@ -225,7 +225,7 @@
   </joint>
 
   <link name="rr_femur">
-    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.15"/><inertia ixx="0.0002" ixy="0" ixz="0" iyy="0.0002" iyz="0" izz="0.0002"/></inertial>
+    <inertial><origin xyz="0.05 0 0" rpy="0 0 0"/><mass value="0.15"/><inertia ixx="0.00001" ixy="0" ixz="0" iyy="0.000125" iyz="0" izz="0.000125"/></inertial>
     <visual><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/femur.stl" scale="0.001 0.001 0.001"/></geometry><material name="white"/></visual>
     <collision><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/femur.stl" scale="0.001 0.001 0.001"/></geometry></collision>
   </link>
@@ -239,7 +239,7 @@
   </joint>
 
   <link name="rr_tibia">
-    <inertial><origin xyz="0 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.0001" ixy="0" ixz="0" iyy="0.0001" iyz="0" izz="0.0001"/></inertial>
+    <inertial><origin xyz="0.06 0 0" rpy="0 0 0"/><mass value="0.1"/><inertia ixx="0.000005" ixy="0" ixz="0" iyy="0.000122" iyz="0" izz="0.000122"/></inertial>
     <visual><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/tibia.stl" scale="0.001 0.001 0.001"/></geometry><material name="black"/></visual>
     <collision><origin xyz="0 0 0" rpy="0 0 0"/><geometry><mesh filename="meshes/tibia.stl" scale="0.001 0.001 0.001"/></geometry></collision>
   </link>
