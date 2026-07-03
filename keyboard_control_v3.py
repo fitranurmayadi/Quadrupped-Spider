@@ -247,7 +247,7 @@ def main():
             pos, orn = p.getBasePositionAndOrientation(robot_id, physicsClientId=client)
             euler = p.getEulerFromQuaternion(orn)
             yaw_robot = euler[2]
-            cam_yaw = -90.0 - np.degrees(yaw_robot)
+            cam_yaw = -90.0
             
             p.resetDebugVisualizerCamera(
                 cameraDistance=cam_distance,
