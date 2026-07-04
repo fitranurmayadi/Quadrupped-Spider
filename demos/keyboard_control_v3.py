@@ -5,13 +5,13 @@ import numpy as np
 import pybullet as p
 import pybullet_data
 
-# Ensure we can import spider_ik and gait_controller_v2
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
-from src.gait_controller_v2 import GaitControllerV2
+# Ensure we can import spider_ik and gait_controller_v3
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from src.gait_controller_v3 import GaitControllerV3
 
 def main():
     print("==================================================")
-    print("   INTERACTIVE KEYBOARD CONTROL V2 (VERT. TIBIA)  ")
+    print("   INTERACTIVE KEYBOARD CONTROL V3 (CRAWL GAIT)   ")
     print("==================================================")
     print("Control Instructions:")
     print("  - W / UP ARROW    : Move Forward")
@@ -33,15 +33,15 @@ def main():
     p.setAdditionalSearchPath(pybullet_data.getDataPath(), physicsClientId=client)
     p.setGravity(0, 0, -9.81, physicsClientId=client)
     
-    # Physics Timestep
+    # Physics Timestep (1/240 seconds)
     time_step = 1.0 / 240.0
     p.setTimeStep(time_step, physicsClientId=client)
 
     # 2. Load Plane & URDF
     plane_id = p.loadURDF("plane.urdf", physicsClientId=client)
-    urdf_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "assets", "spider.urdf"))
+    urdf_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "assets", "spider.urdf"))
     
-    start_pos = [0, 0, 0.08]
+    start_pos = [0, 0, 0.05]
     start_orientation = p.getQuaternionFromEuler([0, 0, 0])
     
     robot_id = p.loadURDF(
@@ -91,8 +91,9 @@ def main():
                              rollingFriction=0.01,
                              physicsClientId=client)
 
-    # 3. Initialize Gait Controller V2 (Tibia standing angle = 2.7708)
-    gait = GaitControllerV2(step_length=0.06, step_height=0.025, frequency=3.5, body_z=-0.060)
+    # 3. Initialize Gait Controller V3 (Crawl Gait, standing angle = 2.7708, freq = 1.8 Hz)
+    # Crawl frequency is slightly lower than trot for elegant and stable weight shifts
+    gait = GaitControllerV3(step_length=0.05, step_height=0.020, frequency=1.8, body_z=-0.028, shift_gain=0.6)
 
     # Function to reset joints to splayed standing pose (with exactly vertical tibia)
     def reset_pose():
@@ -116,9 +117,9 @@ def main():
 
     # Add instructions text overlay in PyBullet GUI
     instruction_text = (
-        "Controls (V2 - Vertical Tibia):\n"
+        "Controls (V3 - Crawl Gait):\n"
         "  W / S / A / D or Arrows : Translate\n"
-        "  Q / E : Turn Left / Right (Fast)\n"
+        "  Q / E : Turn Left / Right\n"
         "  Z / X : Raise / Lower Body Height\n"
         "  R : Reset Robot Position\n"
         "  ESC : Quit"
@@ -132,11 +133,11 @@ def main():
         physicsClientId=client
     )
 
-    # Dynamic status overlay for height
+    # Dynamic status overlay for height & CoM shift
     status_text_id = p.addUserDebugText(
         text=f"Body Height: {-gait.body_z * 100:.1f} cm",
         textPosition=[-0.18, -0.18, 0.13],
-        textColorRGB=[0.0, 1.0, 1.0],
+        textColorRGB=[1.0, 0.6, 0.0],  # orange color for V3
         textSize=1.3,
         lifeTime=0,
         physicsClientId=client
@@ -151,7 +152,7 @@ def main():
     
     # Camera settings
     cam_distance = 0.5
-    cam_pitch = -89.9  # Top-down view
+    cam_pitch = -25.0  # Third person view
     
     print("[INFO] Simulation active! Focus the PyBullet window to control the robot.")
 
@@ -164,12 +165,12 @@ def main():
                 
             if ord('r') in keys and keys[ord('r')] & 1:
                 reset_pose()
-                gait.body_z = -0.060
+                gait.body_z = -0.028
                 sim_time = 0.0
                 status_text_id = p.addUserDebugText(
                     text=f"Body Height: {-gait.body_z * 100:.1f} cm",
                     textPosition=[-0.18, -0.18, 0.13],
-                    textColorRGB=[0.0, 1.0, 1.0],
+                    textColorRGB=[1.0, 0.6, 0.0],
                     textSize=1.3,
                     replaceItemUniqueId=status_text_id,
                     physicsClientId=client
@@ -185,11 +186,11 @@ def main():
                 height_changed = True
                 
             if height_changed:
-                gait.body_z = np.clip(gait.body_z, -0.100, -0.040)
+                gait.body_z = np.clip(gait.body_z, -0.075, -0.015)
                 status_text_id = p.addUserDebugText(
                     text=f"Body Height: {-gait.body_z * 100:.1f} cm",
                     textPosition=[-0.18, -0.18, 0.13],
-                    textColorRGB=[0.0, 1.0, 1.0],
+                    textColorRGB=[1.0, 0.6, 0.0],
                     textSize=1.3,
                     replaceItemUniqueId=status_text_id,
                     physicsClientId=client
@@ -219,14 +220,16 @@ def main():
                 dx = -1.0
                 
             if ord('q') in keys and keys[ord('q')] & 3:
-                yaw_rate = 1.5
+                yaw_rate = 1.2
             elif ord('e') in keys and keys[ord('e')] & 3:
-                yaw_rate = -1.5
+                yaw_rate = -1.2
                 
-            joint_targets = gait.get_joint_targets(sim_time, direction=(dx, dy), yaw_rate=yaw_rate)
+            # Compute joint targets using dt = time_step (1/240s) for CoM filtering
+            joint_targets = gait.get_joint_targets(sim_time, dt=time_step, direction=(dx, dy), yaw_rate=yaw_rate)
             
             for j_name, target_angle in joint_targets.items():
                 if j_name in joint_map:
+                    # Increased joint force to 12.0 N for stiffer control
                     p.setJointMotorControl2(
                         bodyUniqueId=robot_id,
                         jointIndex=joint_map[j_name],
@@ -240,7 +243,7 @@ def main():
             p.stepSimulation(physicsClientId=client)
             sim_time += time_step
             
-            # Third-person top-down follow camera
+            # Third-person follow camera
             pos, orn = p.getBasePositionAndOrientation(robot_id, physicsClientId=client)
             euler = p.getEulerFromQuaternion(orn)
             yaw_robot = euler[2]
@@ -249,7 +252,7 @@ def main():
             p.resetDebugVisualizerCamera(
                 cameraDistance=cam_distance,
                 cameraYaw=cam_yaw,
-                cameraPitch= -10,
+                cameraPitch=cam_pitch,
                 cameraTargetPosition=[pos[0], pos[1], pos[2] + 0.02],
                 physicsClientId=client
             )

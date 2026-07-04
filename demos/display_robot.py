@@ -25,7 +25,7 @@ def main():
     plane_id = p.loadURDF("plane.urdf")
 
     # 3. Muat URDF Quadruped Spider
-    urdf_path = os.path.join(os.path.dirname(__file__), "assets", "spider.urdf")
+    urdf_path = os.path.join(os.path.dirname(__file__), "..", "assets", "spider.urdf")
     urdf_path = os.path.abspath(urdf_path)
     
     start_pos = [0, 0, 0.35]

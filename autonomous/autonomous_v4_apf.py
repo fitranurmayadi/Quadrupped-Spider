@@ -6,7 +6,7 @@ import pybullet as p
 import pybullet_data
 
 # Ensure we can import src.gait_controller_v2 and spider_ik
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from src.gait_controller_v2 import GaitControllerV2
 
 def cast_ray_recursive(client, start, end, robot_id, plane_id, max_depth=3):
@@ -156,7 +156,7 @@ def main():
         [0, 1, 0], 3, physicsClientId=client
     )
     # 5. Summon Robot Spider at spawn position
-    urdf_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "assets", "spider.urdf"))
+    urdf_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "assets", "spider.urdf"))
     robot_start_pos = [-5.0, -5.0, 0.08]
     robot_start_orn = p.getQuaternionFromEuler([0, 0, 0])
     

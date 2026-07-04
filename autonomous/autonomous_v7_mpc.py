@@ -6,7 +6,7 @@ import pybullet as p
 import pybullet_data
 from scipy.optimize import minimize
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from src.gait_controller_v2 import GaitControllerV2
 def cast_ray_recursive(client, start, end, robot_id, plane_id, max_depth=3):
     current_start = list(start)
@@ -178,7 +178,8 @@ def main():
     # Stateful variables for trajectory drawing
     traj_line_ids = []
 
-    robot_id = p.loadURDF("assets/spider.urdf", [start_point[0], start_point[1], 0.15], p.getQuaternionFromEuler([0, 0, np.pi/4]), physicsClientId=client)
+    urdf_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "assets", "spider.urdf"))
+    robot_id = p.loadURDF(urdf_path, [start_point[0], start_point[1], 0.15], p.getQuaternionFromEuler([0, 0, np.pi/4]), physicsClientId=client)
     gait = GaitControllerV2(step_length=0.07, step_height=0.025, frequency=5.0, body_z=-0.060)
 
     # Re-declare joint indices mapping

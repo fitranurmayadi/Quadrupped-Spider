@@ -6,7 +6,7 @@ import pybullet as p
 import pybullet_data
 
 # Ensure we can import src.gait_controller_v2 and spider_ik
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from src.gait_controller_v2 import GaitControllerV2
 from src.path_planning import GridMap, a_star_search, pure_pursuit
 
@@ -173,7 +173,7 @@ def main():
         )
 
     # 5. Summon Robot Spider at spawn position
-    urdf_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "assets", "spider.urdf"))
+    urdf_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "assets", "spider.urdf"))
     robot_start_pos = [-5.0, -5.0, 0.08]
     robot_start_orn = p.getQuaternionFromEuler([0, 0, 0])
     

@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
 # Ensure we can import src.gait_controller_v2 and src.path_planning
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from src.gait_controller_v2 import GaitControllerV2
 from src.path_planning import GridMap, a_star_search, dijkstra_search, pure_pursuit
 
@@ -206,7 +206,7 @@ def main():
     joint_indices = {}
     
     # Load URDFs
-    urdf_path = "assets/spider.urdf"
+    urdf_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "assets", "spider.urdf"))
     for name in ['v4', 'v5', 'v6', 'v7']:
         r_id = p.loadURDF(urdf_path, [start_point[0], start_point[1], 0.15], p.getQuaternionFromEuler([0, 0, np.pi/4]), physicsClientId=client)
         robot_ids[name] = r_id
@@ -525,7 +525,7 @@ def main():
     plt.legend()
     
     plt.tight_layout()
-    plot_filepath = os.path.abspath("trajectory_comparison.png")
+    plot_filepath = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "docs", "trajectory_comparison.png"))
     plt.savefig(plot_filepath, dpi=150)
     plt.close()
     

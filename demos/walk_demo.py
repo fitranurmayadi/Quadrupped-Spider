@@ -7,7 +7,7 @@ import pybullet as p
 import pybullet_data
 
 # Ensure we can import spider_ik and gait_controller
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from src.gait_controller import GaitController
 
 def run_walk_demo(gui=True, target_distance=1.0, max_duration=30.0):
@@ -33,7 +33,7 @@ def run_walk_demo(gui=True, target_distance=1.0, max_duration=30.0):
     # 2. Load Plane & URDF
     plane_id = p.loadURDF("plane.urdf", physicsClientId=client)
     
-    urdf_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "assets", "spider.urdf"))
+    urdf_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "assets", "spider.urdf"))
     if not os.path.exists(urdf_path):
         raise FileNotFoundError(f"URDF file not found at: {urdf_path}")
 
