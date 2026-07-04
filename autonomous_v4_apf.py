@@ -93,7 +93,7 @@ def main():
 
     # 3. Procedurally generate random block obstacles
     np.random.seed(42)  # For reproducible obstacle course
-    num_obstacles = 16
+    num_obstacles = 24
     obstacles = []
     
     start_point = np.array([-5.0, -5.0])
@@ -112,7 +112,7 @@ def main():
                 # Ensure obstacles are spaced to leave ~100-110cm edge-to-edge gaps
                 too_close = False
                 for obs_pos in obstacles:
-                    if np.linalg.norm(pos - obs_pos) < 1.6:
+                    if np.linalg.norm(pos - obs_pos) < 0.75:
                         too_close = True
                         break
                 if not too_close:
@@ -149,7 +149,12 @@ def main():
         basePosition=[target_point[0], target_point[1], 0.75],
         physicsClientId=client
     )
-
+    # Draw nominal path (straight line from start to target)
+    p.addUserDebugLine(
+        [start_point[0], start_point[1], 0.05], 
+        [target_point[0], target_point[1], 0.05], 
+        [0, 1, 0], 3, physicsClientId=client
+    )
     # 5. Summon Robot Spider at spawn position
     urdf_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "assets", "spider.urdf"))
     robot_start_pos = [-5.0, -5.0, 0.08]
@@ -182,7 +187,7 @@ def main():
 
     # Initialize V2 Trot Gait Controller (Stiff and fast)
     # Default height is 6.0 cm (body_z = -0.060)
-    gait = GaitControllerV2(step_length=0.06, step_height=0.025, frequency=3.5, body_z=-0.060)
+    gait = GaitControllerV2(step_length=0.07, step_height=0.025, frequency=5.0, body_z=-0.060)
 
     # Reset pose helper
     def reset_pose():
@@ -218,9 +223,9 @@ def main():
         )
 
     # Raycast sensor parameters
-    ray_length = 0.3
-    # Fan of 17 rays (angles in radians relative to robot heading to eliminate blind spots)
-    ray_angles = np.radians([-80, -70, -60, -50, -40, -30, -20, -10, 0, 10, 20, 30, 40, 50, 60, 70, 80])
+    ray_length = 0.6
+    # 16 rays distributed evenly 360 degrees around the robot
+    ray_angles = np.linspace(-np.pi, np.pi, 16, endpoint=False)
     ray_line_ids = []
 
     # APF coefficients
@@ -291,6 +296,10 @@ def main():
             # 3. Raycasting LiDAR Simulation (Runs at 240 Hz for responsive control loop)
             v_rep = np.zeros(2)
             
+            dist_left = ray_length
+            dist_front = ray_length
+            dist_right = ray_length
+            
             if not headless and show_debug_lines:
                 # Clear old debug lines
                 for l_id in ray_line_ids:
@@ -298,12 +307,12 @@ def main():
                 ray_line_ids.clear()
             
             for j, angle in enumerate(ray_angles):
-                r_start = [pos[0], pos[1], pos[2]]
+                r_start = [pos[0], pos[1], pos[2] + 0.08]
                 ray_yaw = yaw + angle
                 r_end = [
                     pos[0] + ray_length * np.sin(ray_yaw),
                     pos[1] - ray_length * np.cos(ray_yaw),
-                    pos[2]
+                    pos[2] + 0.08
                 ]
                 
                 # Call recursive raycaster
@@ -311,6 +320,13 @@ def main():
                 
                 if hit_object != -1 and hit_object != plane_id:
                     hit_dist = hit_fraction * ray_length
+                    
+                    if -np.pi/4 <= angle <= np.pi/4:
+                        dist_front = min(dist_front, hit_dist)
+                    elif np.pi/4 < angle <= 3*np.pi/4:
+                        dist_left = min(dist_left, hit_dist)
+                    elif -3*np.pi/4 <= angle < -np.pi/4:
+                        dist_right = min(dist_right, hit_dist)
                     
                     if not headless and show_debug_lines:
                         # Highlight blocked path in Red
@@ -364,7 +380,7 @@ def main():
                 displacement = np.linalg.norm(np.array(pos[:2]) - last_check_pos)
                 if displacement < 0.08:
                     escape_mode = True
-                    escape_timer = 1.5
+                    escape_timer = 1.0
                     escape_cooldown = 6.0
                     curl_sign = -curl_sign if curl_sign is not None else 1.0
                     v_steer_prev = np.array([0.0, -1.0])  # Reset LPF
@@ -373,9 +389,9 @@ def main():
                 last_check_time = sim_time
 
             if escape_timer > 0.0:
-                # ESCAPE MANEUVER: reverse + hard yaw for 1.5 seconds
-                dy = 0.5   # move backward (positive dy = backward in robot frame)
-                yaw_rate = 2.0 * curl_sign if curl_sign is not None else 2.0
+                # ESCAPE MANEUVER: slight reverse + fast yaw for 1.0 seconds
+                dy = 0.1   # move backward slightly
+                yaw_rate = 3.5 * curl_sign if curl_sign is not None else 3.5
                 dx = 0.0
                 escape_timer -= time_step
                 if escape_timer <= 0.0:
@@ -385,17 +401,31 @@ def main():
             else:
                 dx, dy = 0.0, 0.0
                 yaw_rate = 0.0
-
-                if np.abs(heading_error) > 0.6:
-                    # Pivot turn in place if heading error is large
-                    yaw_rate = np.clip(2.5 * heading_error, -1.5, 1.5)
-                    dx, dy = 0.0, 0.0
+                
+                # Preemptive Obstacle Avoidance based on specific LiDAR sectors
+                if dist_front < 0.60 or dist_left < 0.60 or dist_right < 0.60:
+                    if dist_front < 0.30:
+                        # ZONE 1: Critical Zone (< 30cm in front) -> Pivot turn quickly in place
+                        dy = 0.0
+                        yaw_rate = 3.5 if dist_right < dist_left else -3.5
+                    else:
+                        # ZONE 2: Warning Zone (30cm to 60cm front, or < 60cm sides) -> Walk forward while turning proportionally
+                        active_dist = min(dist_front, dist_left, dist_right)
+                        proximity_factor = np.clip((0.60 - active_dist) / 0.30, 0.0, 1.0)
+                        dy = -0.5 * (1.0 - 0.3 * proximity_factor)  # slow down slightly as we get closer
+                        yaw_rate = 3.0 * proximity_factor * (1.0 if dist_right < dist_left else -1.0)
                 else:
-                    # Walk forward while adjusting yaw
-                    yaw_rate = np.clip(2.0 * heading_error, -1.0, 1.0)
-                    # Slow down forward walk speed if there is heading error or close obstacle
-                    forward_speed = 1.0 * np.cos(heading_error)
-                    dy = -forward_speed
+                    # ZONE 3: Clear Zone (>= 60cm) -> Standard Steering
+                    if np.abs(heading_error) > 1.2:
+                        # Pivot turn in place only if heading error is very large (> ~70 deg)
+                        yaw_rate = np.clip(3.5 * heading_error, -2.5, 2.5)
+                        dx, dy = 0.0, 0.0
+                    else:
+                        # Walk forward while adjusting yaw (faster yaw correction)
+                        yaw_rate = np.clip(3.0 * heading_error, -2.0, 2.0)
+                        # Maintain forward speed while turning
+                        forward_speed = 1.0 * max(0.3, np.cos(heading_error))
+                        dy = -forward_speed
 
             # Compute joint targets
             joint_targets = gait.get_joint_targets(sim_time, direction=(dx, dy), yaw_rate=yaw_rate)
@@ -432,7 +462,8 @@ def main():
                     cameraTargetPosition=[pos[0], pos[1], pos[2] + 0.1],
                     physicsClientId=client
                 )
-                time.sleep(time_step)
+                if not headless:
+                    time.sleep(time_step / 2.0) # Run simulation 2x faster in GUI
 
     except KeyboardInterrupt:
         print("[INFO] Autopilot interrupted.")
