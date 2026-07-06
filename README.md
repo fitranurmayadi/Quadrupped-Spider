@@ -60,6 +60,13 @@ Quadruped-Spider/
 ├── images/
 │   └── image.png             # Raw screenshot folder
 │
+├── freecad/                  # Original FreeCAD 3D design files (.FCStd)
+│   ├── Assembly.FCStd        # Robot assembly model
+│   ├── Main-Body.FCStd       # Main body chassis model
+│   ├── Coxa.FCStd            # Coxa (hip segment) model
+│   ├── Femur.FCStd           # Femur (upper leg segment) model
+│   └── Tibia.FCStd           # Tibia (lower leg segment) model
+│
 ├── src/
 │   ├── __init__.py           # Package initializer
 │   ├── spider_ik.py          # Analytical Inverse Kinematics solver

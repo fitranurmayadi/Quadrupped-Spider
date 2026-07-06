@@ -43,6 +43,7 @@ scratch/
 .DS_Store
 Thumbs.db
 
-# FreeCAD
-freecad/
+# FreeCAD backup
+freecad/*.FCBak
+
 
