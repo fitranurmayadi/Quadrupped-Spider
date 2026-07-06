@@ -75,7 +75,8 @@ Quadruped-Spider/
 ├── tools/
 │   ├── basic_axis_check.py   # Coordinate axis alignment verification
 │   ├── interactive_calibration.py # Interactive joint calibration tool
-│   └── calibration_results.json   # Calibration saved configurations
+│   ├── calibration_results.json   # Calibration saved configurations
+│   └── export_stl.py             # FreeCAD design to STL export script
 │
 ├── autonomous/
 │   ├── autonomous_v4_apf.py      # V4: Reactive Artificial Potential Field Navigation
